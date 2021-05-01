@@ -1,0 +1,6 @@
+{
+  "path": "./node_modules/cz-conventional-changelog",
+  "maxSubjectLength": 72,
+  "bodyLineLength": 100,
+  "defaultScope": "global"
+}

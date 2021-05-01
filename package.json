@@ -1,0 +1,16 @@
+{
+  "name": "@rtapp/cdrs-deploy",
+  "private": true,
+  "description": "Express.js server for cdrs-deploy.repohubdev.tk",
+  "dependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "commitizen": "^4.2.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "commit": "cz",
+    "start": "node server.js"
+  }
+}
