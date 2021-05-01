@@ -1,5 +1,6 @@
 {
   "name": "@rtapp/cdrs-deploy",
+  "version": "0.1.0",
   "private": true,
   "description": "Express.js server for cdrs-deploy.repohubdev.tk",
   "dependencies": {
@@ -10,7 +11,7 @@
     "express": "^4.17.1"
   },
   "scripts": {
-    "commit": "cz",
+    "commit": "cz --signoff",
     "start": "node server.js"
   }
 }
