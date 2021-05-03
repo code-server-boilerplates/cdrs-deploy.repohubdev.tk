@@ -224,6 +224,7 @@ __metadata:
     dotenv: ^8.2.0
     express: ^4.17.1
     nodemon: ^2.0.7
+    prettier: ^2.2.1
   languageName: unknown
   linkType: soft
 
@@ -3335,6 +3336,15 @@ fsevents@~2.3.1:
   version: 2.0.0
   resolution: "prepend-http@npm:2.0.0"
   checksum: d39325775adce38e18213fd19656af4abd7672ef6b1e330437079bb237de011d49a70bfb56b35037603d30ef279cceddb33794f70168582d50845c2ade29968e
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "prettier@npm:2.2.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 92c6c9f4b87eba1f28466edee57dd18c80d00b858edda77d46d1950d20e6e302b68ee255fc91133ba931e63c4577b5ae30da194d9626a8f3c0177778b91bf056
   languageName: node
   linkType: hard
 
