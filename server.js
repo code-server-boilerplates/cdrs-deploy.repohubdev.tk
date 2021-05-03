@@ -7,7 +7,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.redirect("https://github.com/code-server-boilerplates/template-registry/issues/new/choose");
+  res.redirect(
+    "https://github.com/code-server-boilerplates/template-registry/issues/new/choose",
+  );
 });
 
 app.get("/heartbeat", (req, res) => {
@@ -43,10 +45,12 @@ app.get("/railway/:boilerplateSlug", (req, res) => {
   }
 });
 
-const repo = process.env.REPO_URL || "https://github.com/code-server-boilerplates/cdrs-deploy.repohubdev.tk";
+const repo =
+  process.env.REPO_URL ||
+  "https://github.com/code-server-boilerplates/cdrs-deploy.repohubdev.tk";
 app.get("/source", (req, res) => {
-  res.redirect(repo)
-})
+  res.redirect(repo);
+});
 
 const port = process.env.SERVER_PORT || 8080;
 app.listen(port, () => {
