@@ -1,0 +1,33 @@
+name: "Pull bootstrapper scripts"
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "src/.trigger-rebuild"
+
+env:
+  REPO_REGISTRY_INDEX: "https://raw.githubusercontent.com/code-server-boilerplates/template-registry/main/scrupts/index-bootstrapper.sh"
+  #REPO_REGISTRY_GIT_URL: "https://github.com/code-server-boilerplates/template-registry"
+
+jobs:
+  main:
+    runs-on: "ubuntu-latest"
+    steps:
+       - uses: actions/checkout@v2
+         name: Checkout
+         with:
+           token: ${{ secrets.GH_SERVICE_ACCOUNT_API_KEY }}
+       - name: "Nuke legacy files"
+         run: "rm -rv src/scripts/ && mkdir src/scripts && touch src/scripts/.gitkeep"
+       - name: "Update bootstrapper links"
+         run: "curl -sL ${REPO_REGISTRY_INDEX} | bash"
+       - name: "Commit updates"
+         run: |
+           git config user.email "recaptime.madebythepins@gmail.com"
+           git config user.name "Recap Time Bot"
+           git add src/scripts/
+           git commit --signoff \
+             -m "chore(bootstrapper-scripts): update scripts with GitHub Actions [skip ci]"
+             -m 'Timestamp: $(date "+%s")'
+           git push
