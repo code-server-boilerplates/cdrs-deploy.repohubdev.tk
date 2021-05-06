@@ -28,7 +28,8 @@ jobs:
            git config user.email "recaptime.madebythepins@gmail.com"
            git config user.name "Recap Time Bot"
            git add src/scripts/
+           export CI_TIMESTAMP="$(date '+%s')"
            git commit --signoff \
              -m "chore(bootstrapper-scripts): update scripts with GitHub Actions [skip ci]" \
-             -m 'Timestamp: $(date "+%s")'
+             -m 'Timestamp: $CI_TIMESTAMP'
            git push
