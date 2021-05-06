@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths:
       - "src/.trigger-rebuild"
+  workflow_dispatch:
 
 env:
   REPO_REGISTRY_INDEX: "https://raw.githubusercontent.com/code-server-boilerplates/template-registry/main/scripts/index-bootstrapper.sh"
