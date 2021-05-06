@@ -7,7 +7,7 @@ on:
       - "src/.trigger-rebuild"
 
 env:
-  REPO_REGISTRY_INDEX: "https://raw.githubusercontent.com/code-server-boilerplates/template-registry/main/scrupts/index-bootstrapper.sh"
+  REPO_REGISTRY_INDEX: "https://raw.githubusercontent.com/code-server-boilerplates/template-registry/main/scripts/index-bootstrapper.sh"
   #REPO_REGISTRY_GIT_URL: "https://github.com/code-server-boilerplates/template-registry"
 
 jobs:
@@ -28,6 +28,6 @@ jobs:
            git config user.name "Recap Time Bot"
            git add src/scripts/
            git commit --signoff \
-             -m "chore(bootstrapper-scripts): update scripts with GitHub Actions [skip ci]"
+             -m "chore(bootstrapper-scripts): update scripts with GitHub Actions [skip ci]" \
              -m 'Timestamp: $(date "+%s")'
            git push
