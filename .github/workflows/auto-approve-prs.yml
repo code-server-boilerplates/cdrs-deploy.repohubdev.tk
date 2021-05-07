@@ -1,8 +1,8 @@
 name: "Approve PR"
 
 on:
-  pull_request:
-    branches: [ main ]
+  issue_comment:
+    types: [created]
 
 jobs:
   on-summon:
@@ -32,7 +32,8 @@ jobs:
         with:
           github-token: ${{ secret.GH_SERVICE_ACCOUNT_API_KEY }}
           script: |
-            const reviewMessage = "Hey, @" + context.payload.sender.login + "! I have approved this PR for you. You may now merge this."
+            const reviewMessage = "Hey, @" + context.payload.sender.login + "! I have approved this PR for you. You may now merge this as needed."
+            console.log("Preview: " + reviewMessage);
             await github.pulls.createReview({
               ...context.repo,
               pull_number: context.payload.number,
