@@ -27,6 +27,8 @@ jobs:
               // if not, skip
               return
             }
+
+            console.log(context.payload);
       - name: "Approve pull request"
         uses: actions/github-script@v4
         with:
