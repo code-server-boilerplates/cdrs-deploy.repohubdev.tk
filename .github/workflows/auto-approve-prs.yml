@@ -1,0 +1,41 @@
+name: "Approve PR"
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  on-summon:
+    name: "Command trigger received"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Check if the payload sender is the part of maintainers team"
+        uses: actions/github-script@v4
+        if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
+        with:
+          github-token: ${{ secret.GH_SERVICE_ACCOUNT_API_KEY }}
+          script: |
+            // Only perform this action with org maintainers
+            try {
+              await github.teams.getMembershipForUserInOrg({
+                org: 'code-server-boilerplates',
+                team_slug: 'maintainers',
+                username: context.payload.sender.login,
+              });
+            } catch(err) {
+              // if not, skip
+              return
+            }
+      - name: "Approve pull request"
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secret.GH_SERVICE_ACCOUNT_API_KEY }}
+          script: |
+            const reviewMessage = "Hey, @" + context.payload.sender.login + "! I have approved this PR for you. You may now merge this."
+            await github.pulls.createReview({
+              ...context.repo,
+              pull_number: context.payload.number,
+              body: reviewMessage,
+              event: 'APPROVE'
+            })
