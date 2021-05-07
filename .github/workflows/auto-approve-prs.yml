@@ -13,8 +13,10 @@ jobs:
       - name: "Print debugging info"
         uses: actions/github-script@v4
         with:
-          script: console.log(context.payload);
-      - name: "Check if the payload sender is the part of maintainers team"
+          script: |
+            console.log("Payload: " + context.payload);
+            console.log("Event: " + context.event);
+      - name: "Prerequesite Checker"
         uses: actions/github-script@v4
         if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
         with:
@@ -31,6 +33,10 @@ jobs:
               // if not, skip
               return
             }
+      # todo
+      #- name: "Warn user if triggered on issues"
+      #  uses: actions/github-script@v4
+      #  if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
       - name: "Approve pull request"
         uses: actions/github-script@v4
         if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
