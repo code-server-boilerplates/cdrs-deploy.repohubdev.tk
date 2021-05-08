@@ -13,7 +13,7 @@ jobs:
   api-dispatch:
     name: "Workflow Dispatcher"
     runs-on: "ubuntu-latest"
-    if: (github.event_name == 'workflow_dispatch' )
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v2
       - name: "Prerequesite Checker"
@@ -36,14 +36,23 @@ jobs:
       - name: "Approve pull request"
         uses: actions/github-script@v4
         if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
+        env:
+          PR_TO_APPROVE: ${{ github.event.inputs.prNumber }}
         with:
           github-token: ${{ secrets.GH_SERVICE_ACCOUNT_API_KEY }}
           script: |
+            // check if PR_TO_APPROVE is empty
+            if (process.env.PR_TO_APPROVE == "") {
+              console.log("PR number to approve was missing");
+              process.exit(0);
+            };
+
+            // if not blank, run this.
             const reviewMessage = "Hey, @" + context.payload.sender.login + "! I have approved this PR for you. You may now merge this as needed."
             console.log("Preview: " + reviewMessage);
             await github.pulls.createReview({
               ...context.repo,
-              pull_number: context.payload.issue.number,
+              pull_number: process.env.PR_TO_APPROVE,
               body: reviewMessage,
               event: 'APPROVE'
             })
