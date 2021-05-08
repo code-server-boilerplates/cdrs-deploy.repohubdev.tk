@@ -24,12 +24,10 @@ app.post("/api/webhookHandler", (req, res) => {
   const webhookHandlerEnabled = process.env.ENABLE_WEBHOOK_ENDPOINT;
   console.log(req.body);
   if (webhookHandlerEnabled != "true") {
-    res
-      .status(404)
-      .json({
-        ok: false,
-        description: "Server doesn't accept webhooks from anyone, even GitHub",
-      });
+    res.status(404).json({
+      ok: false,
+      description: "Server doesn't accept webhooks from anyone, even GitHub",
+    });
   } else {
     const isNewIssue = "owo";
     res.send({ ok: true });
@@ -37,6 +35,9 @@ app.post("/api/webhookHandler", (req, res) => {
 });
 
 app.get("/heroku/:boilerplateSlug", (req, res) => {
+  // TODO: better handle hig counting in the future
+  console.log(
+    "server-log-analytics: Requested slug: " + req.params.boilerplateSlug + " | Request type: heroku.com/deploy | Request ID: TODO"
   // if it's example-project, use the starter-pack repo.
   if (req.params.boilerplateSlug == "example-project") {
     res.redirect(
@@ -53,12 +54,20 @@ app.get("/heroku/:boilerplateSlug", (req, res) => {
 app.get("/railway/:boilerplateSlug", (req, res) => {
   // implement better hit counting handler here
   console.log(
-    "server-log-analytics: Request slug: ${req.params.boilerplateSlug}",
+    "server-log-analytics: Requested slug: " + req.params.boilerplateSlug + " | Request type: railway.app | Request ID: TODO",
   );
   // if it's example-project, use the starter-pack repo.
   if (req.params.boilerplateSlug == "example-project") {
     res.redirect(
       "https://railway.app/new?template=https%3A%2F%2Fgithub.com%2Fcode-server-boilerplates%2Fstarter-pack&envs=PASSWORD%2CGIT_REPO&PASSWORDDesc=Your+password+to+log+in+to+code-server+with&GIT_REPODesc=A+git+repo+to+clone+and+open+in+code-server+%28ex.+https%3A%2F%2Fgithub.com%2Fcdr%2Fdocs.git%29",
+    );
+  } else if (req.params.boilerplateSlug == "starter-pack") {
+    res.redirect("/railway/example-project");
+  } else if (req.params.boilerplateSlug == "upstream") {
+    res.redirect("/railway/deploy-code-server-upstream");
+  } else if (req.params.boilerplateSlug == "deploy-code-server-upstream") {
+    res.redirect(
+      "https://railway.app/new?template=https%3A%2F%2Fgithub.com%2Fcdr%2Fdeploy-code-server&envs=PASSWORD%2CGIT_REPO&PASSWORDDesc=Your+password+to+log+in+to+code-server+with&GIT_REPODesc=A+git+repo+to+clone+and+open+in+code-server+%28ex.+https%3A%2F%2Fgithub.com%2Fcdr%2Fdocs.git%29",
     );
     // otherwise, the defaults will apply
   } else {
@@ -79,9 +88,7 @@ app.get("/source", (req, res) => {
 
 // WIP
 app.get("/bootstrapper/:boilerplateSlug", (req, res) => {
-  res.sendFile(
-    __dirname + "/src/bootstrapper-scripts/" + req.params.boilerplateSlug,
-  );
+  res.sendFile(__dirname + "/src/scripts/" + req.params.boilerplateSlug);
 });
 
 const port = process.env.SERVER_PORT || 8080;
