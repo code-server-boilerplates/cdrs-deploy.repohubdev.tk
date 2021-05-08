@@ -1,0 +1,8 @@
+template: |
+  ## What's New?
+
+  $CHANGES
+
+  ## Contributors for this Release
+
+  $CONTRIBUTORS
