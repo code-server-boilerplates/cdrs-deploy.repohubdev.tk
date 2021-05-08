@@ -3,19 +3,19 @@ name: "Approve PR"
 on:
   issue_comment:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: PR number for automate signoff/approval
+        required: true
 
 jobs:
-  on-summon:
-    name: "Command trigger received"
+  api-dispatch:
+    name: "Workflow Dispatcher"
     runs-on: "ubuntu-latest"
+    if: github.event_name == "workflow_dispatch"
     steps:
       - uses: actions/checkout@v2
-      - name: "Print debugging info"
-        uses: actions/github-script@v4
-        with:
-          script: |
-            console.log("Payload: " + context.payload);
-            console.log("Event: " + context.event);
       - name: "Prerequesite Checker"
         uses: actions/github-script@v4
         if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
@@ -33,10 +33,6 @@ jobs:
               // if not, skip
               return
             }
-      # todo
-      #- name: "Warn user if triggered on issues"
-      #  uses: actions/github-script@v4
-      #  if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
       - name: "Approve pull request"
         uses: actions/github-script@v4
         if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
@@ -47,7 +43,47 @@ jobs:
             console.log("Preview: " + reviewMessage);
             await github.pulls.createReview({
               ...context.repo,
-              pull_number: context.payload.number,
+              pull_number: context.payload.issue.number,
               body: reviewMessage,
               event: 'APPROVE'
             })
+  on-summon:
+    name: "Command trigger received"
+    runs-on: "ubuntu-latest"
+    if: ${{ github.event.issue.pull_request }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log event name
+        run: echo ${{ github.event_name }}
+      - name: "Prerequesite Checker"
+        uses: actions/github-script@v4
+        if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
+        with:
+          github-token: ${{ secrets.GH_SERVICE_ACCOUNT_API_KEY }}
+          script: |
+            // Only perform this action with org maintainers
+            try {
+              await github.teams.getMembershipForUserInOrg({
+                org: 'code-server-boilerplates',
+                team_slug: 'maintainers',
+                username: context.payload.sender.login,
+              });
+            } catch(err) {
+              // if not, skip
+              return
+            }
+      - name: "Approve pull request"
+        uses: actions/github-script@v4
+        if: (github.event.comment.body == '@RecapTimeBot approve this PR' || github.event.comment.body == '/approve' )
+        with:
+          github-token: ${{ secrets.GH_SERVICE_ACCOUNT_API_KEY }}
+          script: |
+            const reviewMessage = "Hey, @" + context.payload.sender.login + "! I have approved this PR for you. You may now merge this as needed."
+            console.log("Preview: " + reviewMessage);
+            await github.pulls.createReview({
+              ...context.repo,
+              pull_number: context.payload.issue.number,
+              body: reviewMessage,
+              event: 'APPROVE'
+            })
+
