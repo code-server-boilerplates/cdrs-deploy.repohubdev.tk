@@ -11,11 +11,12 @@ hosted on Divio.
 repo path for specific Code Server template, which the server usually handles it through `if-else` magic (e.g. `/railway/nodejs-yarnified` for Yarnified Node.js)
 * `/heroku/slug-here` - redirects to <https://heroku.com/deploy?template=https://github.com/username/slug-here>, where `username/slug-here` (in URL-decoded form) is the GitHub repo path
 for specific Code Server template, which the server usually handles it through `if-else` magic (e.g. `/heroku/electron-builder` for building Electron apps like VS Code or Theia)
-* `/heartbeat` - use this endpoint to check server status (even there's an endpoint specifically for health checking services,
+* `/api/heartbeat` - use this endpoint to check server status (even there's an endpoint specifically for health checking services,
 there's no way to detect issues in the code through this API endpoint
 unless you're using an modern IDE like VS Code or Atom or even going to every single endpoint listed above
 * `/register` - redirects to `process.env.TEMPLATE_REGISTRY_REPO_URL + "/issues/new/choose"`
 (by default, <https://github.com/code-server-boilerplates/template-registry/issues/new/choose>)
+* `/api/webhookHandler` - Reserved for GitHub webhook handling. Will develop an code handling for tnat soon.
 
 ## Development
 

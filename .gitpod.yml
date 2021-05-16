@@ -1,0 +1,9 @@
+image: gitpod/workspace-full
+
+tasks:
+  - before: yarn install
+    command: yarn dev 
+
+vscode:
+  extensions:
+    - wakatime.vscode-wakatime@4.0.10:30b7a8787b00b019734875064c013473
