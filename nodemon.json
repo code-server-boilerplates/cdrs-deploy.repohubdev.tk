@@ -1,7 +1,8 @@
 {
   "watch": [
       "server.js",
-      ".env"
+      ".env",
+      "lib/**.js"
   ],
-  "delay": "5"
+  "delay": 2
 }
