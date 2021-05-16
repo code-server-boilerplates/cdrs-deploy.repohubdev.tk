@@ -3,14 +3,27 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 // database logic
-const mongoose = require('mongoose');
-const siteViews = require('./lib/visitsModel');
-const MongoClient = require('mongodb').MongoClient;
-const uri = process.env.MONGO_URL;
+const mongoose = require("mongoose");
+const visits = require("./lib/visitsModel");
 
+// function for hit counter stuff
+countNewVisit = function (collection, slug) {
+  visits
+    .findOneAndUpdate(
+      { page: slug },
+      { $inc: { counter: 1 } },
+      { new: true },
+    )
+    .then((data) => {
+      console.log("server-log-analytics: " + data);
+    })
+    .catch((err) => {
+      console.log("server-errors: " + err);
+    });
+};
 
 const registryRepo =
   process.env.TEMPLATE_REGISTRY_REPO_URL ||
@@ -46,21 +59,33 @@ app.post("/api/webhookHandler", (req, res) => {
 });
 
 app.get("/api/webhookHandler", (req, res) => {
-  res.status(405).json({ ok: false, description: "Method not supported", code: 405 })
-})
+  res
+    .status(405)
+    .json({ ok: false, description: "Method not supported", code: 405 });
+});
 
 app.get("/heroku/:boilerplateSlug", (req, res) => {
   // TODO: better handle hig counting in the future
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   console.log(
-    "server-log-analytics: Requested slug: " + req.params.boilerplateSlug + " | Request type: heroku.com/deploy | Request ID: " + uuidv4() + " | IP Address: " + ip);
+    "server-log-analytics: Requested slug: " +
+      req.params.boilerplateSlug +
+      " | Request type: heroku.com/deploy | Request ID: " +
+      uuidv4() +
+      " | IP Address: " +
+      ip,
+  );
+  var slugVisitName = "heroku-" + req.params.boilerplateSlug;
+  countNewVisit(slugVisitName);
   // if it's example-project, use the starter-pack repo.
   if (req.params.boilerplateSlug == "example-project") {
     res.redirect(
       "https://heroku.com/deploy?template=https://github.com/code-server-boilerplate/starter-pack",
     );
   } else if (req.params.boilerplateSlug == "deploy-code-server-upstream") {
-    res.redirect("https://heroku.com/deploy?template=https://github.com/cdr/deploy-code-server")
+    res.redirect(
+      "https://heroku.com/deploy?template=https://github.com/cdr/deploy-code-server",
+    );
   } else {
     res.redirect(
       "https://heroku.com/deploy?template=https://github.com/code-server-boilerplate/" +
@@ -71,9 +96,17 @@ app.get("/heroku/:boilerplateSlug", (req, res) => {
 
 app.get("/railway/:boilerplateSlug", (req, res) => {
   // implement better hit counting handler here
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
   console.log(
-    "server-log-analytics: Requested slug: " + req.params.boilerplateSlug + " | Request type: railway.app | Request ID: " + uuidv4() + " | IP Address: " + ip);
+    "server-log-analytics: Requested slug: " +
+      req.params.boilerplateSlug +
+      " | Request type: railway.app | Request ID: " +
+      uuidv4() +
+      " | IP Address: " +
+      ip,
+  );
+  var slugVisitName = "heroku-" + req.params.boilerplateSlug;
+  countNewVisit(slugVisitName);
   // if it's example-project, use the starter-pack repo.
   if (req.params.boilerplateSlug == "example-project") {
     res.redirect(
@@ -110,6 +143,17 @@ app.get("/bootstrapper/:boilerplateSlug", (req, res) => {
 });
 
 const port = process.env.SERVER_PORT || 8080;
-app.listen(port, () => {
-  console.log(`server-up: Now listening at port ${port}`);
-});
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    retryWrites: true,
+  })
+  .then(() => {
+    console.log(`server-log-analytics: Conncted to MongoDB`);
+    app.listen(port, () =>
+      console.log(`server-up: Now listening at port ${port}`),
+    );
+  });
