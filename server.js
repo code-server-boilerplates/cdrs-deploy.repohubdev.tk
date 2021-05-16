@@ -1,7 +1,16 @@
+// core server
 const express = require("express");
 const app = express();
 require("dotenv").config();
+
 const { v4: uuidv4 } = require('uuid');
+
+// database logic
+const mongoose = require('mongoose');
+const siteViews = require('./lib/visitsModel');
+const MongoClient = require('mongodb').MongoClient;
+const uri = process.env.MONGO_URL;
+
 
 const registryRepo =
   process.env.TEMPLATE_REGISTRY_REPO_URL ||

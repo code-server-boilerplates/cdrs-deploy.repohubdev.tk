@@ -3,5 +3,5 @@
       "server.js",
       ".env"
   ],
-  "delay": "10"
+  "delay": "5"
 }
